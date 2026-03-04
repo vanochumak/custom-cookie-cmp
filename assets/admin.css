@@ -1,0 +1,393 @@
+/* Two-column layout */
+.ccc-admin-layout {
+   display: grid;
+   grid-template-columns: 1fr 240px;
+   gap: 24px;
+   align-items: start;
+   margin-top: 8px;
+}
+
+.ccc-admin-main {
+   min-width: 0;
+}
+
+/* Sticky sidebar */
+.ccc-admin-sidebar {
+   position: sticky;
+   top: 32px;
+}
+
+.ccc-admin-sidebar-box {
+   background: #fff;
+   border: 1px solid #c3c4c7;
+   border-radius: 4px;
+   overflow: hidden;
+}
+
+.ccc-sidebar-title {
+   background: #f6f7f7;
+   border-bottom: 1px solid #c3c4c7;
+   padding: 10px 12px;
+   font-size: 13px;
+   font-weight: 600;
+   color: #1d2327;
+}
+
+.ccc-sidebar-body {
+   padding: 12px;
+}
+
+.ccc-sidebar-body .button-primary {
+   width: 100%;
+   text-align: center;
+   justify-content: center;
+}
+
+.ccc-sidebar-box-reset {
+   margin-top: 12px;
+}
+
+.button-link-delete {
+   color: #b32d2e;
+   text-decoration: none;
+   background: none;
+   border: none;
+   cursor: pointer;
+   padding: 0;
+   font-size: 13px;
+}
+
+.button-link-delete:hover {
+   color: #8a2020;
+   text-decoration: underline;
+}
+
+/* Section headings */
+.wrap h2 {
+   background: #fff;
+   border: 1px solid #c3c4c7;
+   border-bottom: none;
+   margin: 0;
+   color: #23282d;
+   font-size: 17px;
+   padding: 8px 12px;
+   line-height: 1.4;
+}
+
+/* Table of settings (card design) */
+.form-table {
+   background: #fff;
+   border: 1px solid #dcdcde;
+   border-radius: 8px;
+   /* Rounded corners */
+   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+   /* Light shadow */
+   margin-top: 0;
+   overflow: hidden;
+   width: 100%;
+   border-spacing: 0;
+   margin-bottom: 24px;
+}
+
+/* Table rows */
+.form-table tr {
+   border-bottom: 1px solid #f0f0f1;
+}
+
+.form-table tr:last-child {
+   border-bottom: none;
+}
+
+/* Left column (labels) */
+.form-table th {
+   background: #f9f9f9;
+   width: 220px;
+   padding: 20px 20px 20px 12px !important;
+   text-align: left;
+   font-weight: 600;
+   color: #444;
+   vertical-align: top;
+   border-right: 1px solid #f0f0f1;
+   font-size: 13px;
+}
+
+/* Rights column (fields) */
+.form-table td {
+   padding: 20px !important;
+   background: #fff;
+   vertical-align: top;
+}
+
+/* Input fields */
+.form-table input[type="text"],
+.form-table select,
+.form-table textarea {
+   border: 1px solid #8c8f94;
+   border-radius: 4px;
+   padding: 6px 10px;
+   width: 100%;
+   box-shadow: 0 0 0 transparent;
+   transition: box-shadow .1s linear;
+}
+
+.form-table input[type="text"]:focus,
+.form-table select:focus,
+.form-table textarea:focus {
+   border-color: #2271b1;
+   box-shadow: 0 0 0 1px #2271b1;
+   outline: 2px solid transparent;
+}
+
+.form-table textarea {
+   min-height: 80px;
+   resize: vertical;
+}
+
+/* Color Picker override (to fit nicely) */
+.wp-picker-container {
+   display: block;
+   margin-bottom: 10px;
+}
+
+.ccc-color-section {
+   margin-top: 20px;
+   font-weight: bold;
+   border-bottom: 1px solid #ddd;
+   padding-bottom: 5px;
+   margin-bottom: 15px;
+}
+
+.ccc-colors-grid {
+   display: grid;
+   grid-template-columns: 1fr 1fr;
+   gap: 24px;
+   align-items: start;
+}
+
+.ccc-color-field {
+   display: flex;
+   flex-direction: column;
+   align-items: flex-start;
+   gap: 6px;
+   margin-bottom: 4px;
+   padding: 10px 12px;
+   background: #f9f9f9;
+   border-radius: 4px;
+   border: 1px solid #eee;
+}
+
+.ccc-color-field > label {
+   font-weight: 500;
+   color: #1d2327;
+   font-size: 12px;
+}
+
+.ccc-color-field .wp-picker-container {
+   margin-bottom: 0;
+}
+
+@media (max-width: 900px) {
+   .ccc-colors-grid {
+      grid-template-columns: 1fr;
+   }
+}
+
+/* Localization blocks — collapsible details */
+.ccc-locale-block {
+   background: #fcfcfc;
+   border: 1px solid #ddd;
+   border-left: 4px solid #2271b1;
+   border-radius: 4px;
+   margin-bottom: 16px;
+   overflow: hidden;
+}
+
+.ccc-locale-summary {
+   cursor: pointer;
+   list-style: none;
+   display: flex;
+   align-items: center;
+   justify-content: space-between;
+   padding: 12px 16px;
+   background: #f0f4fa;
+   font-size: 13px;
+   font-weight: 700;
+   color: #2271b1;
+   text-transform: uppercase;
+   letter-spacing: 0.6px;
+   user-select: none;
+}
+
+.ccc-locale-summary::-webkit-details-marker {
+   display: none;
+}
+
+.ccc-locale-summary::after {
+   content: '▾';
+   font-size: 16px;
+   transition: transform 0.2s;
+}
+
+.ccc-locale-block:not([open]) .ccc-locale-summary::after {
+   transform: rotate(-90deg);
+}
+
+.ccc-locale-body {
+   padding: 0;
+}
+
+/* Horizontal tabs nav */
+.ccc-tabs-nav {
+   display: flex;
+   gap: 0;
+   border-bottom: 2px solid #e0e0e0;
+   background: #fafafa;
+   padding: 0 16px;
+}
+
+.ccc-tab-btn {
+   background: none;
+   border: none;
+   border-bottom: 3px solid transparent;
+   padding: 12px 16px 10px;
+   font-size: 13px;
+   font-weight: 500;
+   color: #646970;
+   cursor: pointer;
+   margin-bottom: -2px;
+   transition: color 0.15s, border-color 0.15s;
+   white-space: nowrap;
+}
+
+.ccc-tab-btn:hover {
+   color: #2271b1;
+}
+
+.ccc-tab-btn.is-active {
+   color: #2271b1;
+   border-bottom-color: #2271b1;
+   font-weight: 600;
+}
+
+/* Tab panels */
+.ccc-tab-panel {
+   display: none;
+   padding: 20px;
+}
+
+.ccc-tab-panel.is-active {
+   display: block;
+}
+
+/* Field row */
+.ccc-field-row {
+   margin-bottom: 14px;
+}
+
+.ccc-field-row:last-child {
+   margin-bottom: 0;
+}
+
+.ccc-field-label {
+   display: block;
+   font-size: 12px;
+   font-weight: 500;
+   color: #1d2327;
+   margin-bottom: 5px;
+}
+
+/* Buttons 2-column grid */
+.ccc-texts-buttons-grid {
+   display: grid;
+   grid-template-columns: 1fr 1fr;
+   gap: 0 24px;
+}
+
+/* Categories 2-column grid */
+.ccc-categories-grid {
+   display: grid;
+   grid-template-columns: 1fr 1fr;
+   gap: 16px;
+}
+
+.ccc-category-card {
+   background: #fff;
+   border: 1px solid #e0e0e0;
+   border-radius: 4px;
+   padding: 14px;
+}
+
+/* Category badge — Functional / Marketing etc. */
+.ccc-category-badge {
+   display: inline-block;
+   background: #2271b1;
+   color: #fff;
+   font-size: 11px;
+   font-weight: 700;
+   text-transform: uppercase;
+   letter-spacing: 0.6px;
+   padding: 3px 9px;
+   border-radius: 20px;
+   margin-bottom: 14px;
+}
+
+@media (max-width: 900px) {
+   .ccc-tabs-nav {
+      flex-wrap: wrap;
+   }
+
+   .ccc-texts-buttons-grid,
+   .ccc-categories-grid {
+      grid-template-columns: 1fr;
+   }
+}
+
+/* Save button */
+/* Adaptability */
+@media (max-width: 1024px) {
+   .ccc-admin-layout {
+      grid-template-columns: 1fr;
+   }
+
+   .ccc-admin-sidebar {
+      position: static;
+   }
+
+   .ccc-sidebar-body .button-primary {
+      width: auto;
+   }
+}
+
+@media (max-width: 782px) {
+
+   .form-table,
+   .form-table tbody,
+   .form-table tr,
+   .form-table th,
+   .form-table td {
+      display: block;
+      width: 100%;
+   }
+
+   .form-table th {
+      width: auto;
+      border-right: none;
+      border-bottom: none;
+      padding-bottom: 0 !important;
+   }
+
+   .form-table td {
+      padding-top: 5px !important;
+   }
+}
+
+.description-info {
+   background: #fff;
+   border: 1px solid #c3c4c7;
+   border-bottom: none;
+   margin: 0;
+   color: #23282d;
+   font-size: 12px;
+   padding: 8px 12px;
+   line-height: 1.4;
+}

@@ -1,0 +1,329 @@
+:root {
+   --ccc-banner-bg: #222222;
+   --ccc-banner-text: #ffffff;
+   --ccc-btn-primary-bg: #ffffff;
+   --ccc-btn-primary-text: #000000;
+   --ccc-btn-secondary-bg: #444444;
+   --ccc-btn-secondary-text: #ffffff;
+   --ccc-radius: 4px;
+   --ccc-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+   --ccc-zindex: 99999;
+   --ccc-transition: 0.2s ease-in-out;
+   --ccc-banner-width: none;
+   --ccc-font-family: inherit;
+}
+
+/* "Save my choices" button */
+.ccc-popup .ccc-btn-save {
+   background: var(--ccc-popup-save-bg);
+   color: var(--ccc-popup-save-text);
+}
+
+/* The "Decline all" button is in the popup */
+.ccc-popup .ccc-btn-decline-all {
+   background: var(--ccc-popup-decline-bg);
+   color: var(--ccc-popup-decline-text);
+}
+
+/* Button "Accept all" (outline) in the popup */
+.ccc-popup .ccc-btn-primary-outline {
+   background: transparent;
+   color: var(--ccc-popup-accept-color);
+   border: 1px solid var(--ccc-popup-accept-color);
+}
+
+.ccc-popup .ccc-btn-primary-outline:hover {
+   background: var(--ccc-popup-accept-color);
+   color: #fff;
+}
+
+
+#ccc-banner {
+   position: fixed;
+   left: 0;
+   right: 0;
+   bottom: 0;
+   background: var(--ccc-banner-bg);
+   color: var(--ccc-banner-text);
+   font-family: var(--ccc-font-family);
+   box-shadow: var(--ccc-shadow);
+   padding: 16px 0;
+   z-index: 999999 !important; /* On top of everything */
+   transform: translateY(130%);
+   transition: transform var(--ccc-transition);
+}
+
+#ccc-banner[aria-hidden="false"] {
+   transform: translateY(0);
+}
+
+#ccc-banner .ccc-banner-inner {
+   width: 100%;
+   max-width: var(--ccc-banner-width);
+   margin: 0 auto;
+   padding: 0 20px;
+   box-sizing: border-box;
+   display: grid;
+   grid-template-columns: 1fr auto;
+   align-items: center;
+   gap: 32px;
+}
+
+#ccc-banner .ccc-banner-title {
+   margin: 0 0 4px;
+   font-size: 16px;
+   font-weight: 600;
+}
+
+#ccc-banner .ccc-banner-desc {
+   font-size: 14px;
+   line-height: 1.4;
+}
+
+#ccc-banner .ccc-banner-actions {
+   margin-left: auto;
+   display: flex;
+   gap: 8px;
+   flex-wrap: wrap;
+}
+
+.ccc-btn {
+   font-family: inherit;
+   font-weight: 500;
+   font-size: 14px;
+   border-radius: var(--ccc-radius);
+   padding: 8px 14px;
+   border: 0;
+   cursor: pointer;
+   transition: background var(--ccc-transition), color var(--ccc-transition), border-color var(--ccc-transition);
+}
+
+.ccc-btn-primary {
+   background: var(--ccc-btn-primary-bg);
+   color: var(--ccc-btn-primary-text);
+}
+
+.ccc-btn-primary-outline {
+   background: transparent;
+   color: var(--ccc-btn-primary-bg);
+   border: 1px solid var(--ccc-btn-primary-bg);
+}
+
+.ccc-btn-secondary {
+   background: var(--ccc-btn-secondary-bg);
+   color: var(--ccc-btn-secondary-text);
+}
+
+.ccc-btn:hover {
+   opacity: 0.9;
+}
+
+/* Positions */
+
+.ccc-position-bottom-left {
+   left: 16px !important;
+   right: auto !important;
+   bottom: 16px !important;
+   max-width: 460px;
+   border-radius: var(--ccc-radius);
+}
+
+.ccc-position-bottom-right {
+   right: 16px !important;
+   left: auto !important;
+   bottom: 16px !important;
+   max-width: 460px;
+   border-radius: var(--ccc-radius);
+}
+.ccc-position-bottom-right .ccc-banner-inner, .ccc-position-bottom-left .ccc-banner-inner {
+   grid-template-columns: 1fr !important;
+   gap: 12px !important;
+}
+
+.ccc-position-bottom-full {
+   border-radius: 0;
+}
+
+/* Popup */
+
+.ccc-popup-backdrop {
+   position: fixed;
+   inset: 0;
+   background: rgba(0, 0, 0, 0.5);
+   z-index: calc(var(--ccc-zindex) + 1);
+   display: none;
+   align-items: center;
+   justify-content: center;
+   padding: 20px;
+}
+
+.ccc-popup-backdrop.ccc-visible {
+   display: flex;
+}
+
+.ccc-popup-backdrop[aria-hidden="true"] {
+   display: none;
+}
+
+.ccc-popup {
+   background: #ffffff;
+   color: #111111;
+   max-width: 720px;
+   width: 100%;
+   border-radius: var(--ccc-radius);
+   box-shadow: var(--ccc-shadow);
+   font-family: var(--ccc-font-family);
+   display: flex;
+   flex-direction: column;
+   max-height: 90vh;
+}
+
+.ccc-popup-header {
+   padding: 16px 20px;
+   border-bottom: 1px solid #e0e0e0;
+   display: flex;
+   align-items: center;
+   justify-content: space-between;
+}
+
+.ccc-popup-header h3 {
+   margin: 0;
+   font-size: 18px;
+}
+
+.ccc-popup-close:hover {
+   color: #000;
+}
+
+.ccc-popup-close {
+   border: 0;
+   background: transparent;
+   transition: all .3s ease;
+   font-size: 30px;
+   line-height: 1;
+   cursor: pointer;
+   color: var(--ccc-popup-save-bg);
+}
+
+.ccc-popup-body {
+   padding: 16px 20px;
+   overflow-y: auto;
+}
+
+.ccc-popup-body p {
+   margin-top: 0;
+}
+
+.ccc-category {
+   display: flex;
+   align-items: center;
+   justify-content: space-between;
+   padding: 12px 0;
+   border-bottom: 1px solid #f0f0f0;
+   gap: 16px;
+}
+
+.ccc-category:last-child {
+   border-bottom: 0;
+}
+
+.ccc-category-title {
+   margin: 0 0 4px;
+   font-size: 15px;
+   font-weight: 600;
+}
+
+.ccc-category-description {
+   margin: 0;
+   font-size: 13px;
+   color: #555;
+}
+
+.ccc-category-toggle {
+   white-space: nowrap;
+}
+
+.ccc-toggle-label {
+   font-size: 13px;
+   color: #666;
+}
+
+/* Switch */
+
+.ccc-switch {
+   position: relative;
+   display: inline-block;
+   width: 40px;
+   height: 22px;
+}
+
+.ccc-switch input {
+   opacity: 0;
+   width: 0;
+   height: 0;
+}
+
+.ccc-slider {
+   position: absolute;
+   cursor: pointer;
+   inset: 0;
+   background-color: #ccc;
+   transition: .2s;
+   border-radius: 22px;
+}
+
+.ccc-slider:before {
+   position: absolute;
+   content: "";
+   height: 18px;
+   width: 18px;
+   left: 2px;
+   bottom: 2px;
+   background-color: white;
+   transition: .2s;
+   border-radius: 50%;
+}
+
+.ccc-switch input:checked+.ccc-slider {
+   background-color: #4caf50;
+}
+
+.ccc-switch input:checked+.ccc-slider:before {
+   transform: translateX(18px);
+}
+
+.ccc-popup-footer {
+   padding: 12px 20px 16px;
+   border-top: 1px solid #e0e0e0;
+   display: flex;
+   justify-content: flex-end;
+   gap: 8px;
+   flex-wrap: wrap;
+}
+
+/* Responsive */
+
+@media (max-width: 600px) {
+   #ccc-banner .ccc-banner-inner {
+      grid-template-columns: 1fr;
+   }
+
+   #ccc-banner .ccc-banner-actions {
+      margin-left: 0;
+   }
+
+   .ccc-popup {
+      max-width: 100%;
+   }
+}
+
+body.cookie-popup-open {
+   overflow: hidden;
+}
+
+@media (max-width: 768px) {
+   #ccc-banner .ccc-banner-inner {
+      grid-template-columns: 1fr;
+      gap: 15px;
+   }
+}
