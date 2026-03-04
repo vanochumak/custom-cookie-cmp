@@ -110,11 +110,6 @@ class Custom_Cookie_CMP
 
    public function load_textdomain()
    {
-      load_plugin_textdomain(
-         'custom-cookie-cmp',
-         false,
-         dirname(plugin_basename(__FILE__)) . '/languages'
-      );
    }
 
    public function get_locale_code()
@@ -216,7 +211,8 @@ class Custom_Cookie_CMP
          'ccc-admin',
          plugins_url('assets/admin.js', __FILE__),
          array('jquery', 'wp-color-picker'),
-         self::VERSION
+         self::VERSION,
+         true
       );
 
       wp_enqueue_style('wp-color-picker');
@@ -281,8 +277,8 @@ class Custom_Cookie_CMP
       delete_option(self::OPTION_KEY);
       $this->options_cache = null;
 
-      wp_redirect(add_query_arg(
-         array('page' => 'custom-cookie-cmp', 'ccc_reset' => '1'),
+      wp_safe_redirect(add_query_arg(
+         array('page' => 'custom-cookie-cmp', 'ccc_reset' => '1', '_wpnonce' => wp_create_nonce('ccc_reset_notice')),
          admin_url('options-general.php')
       ));
       exit;
@@ -719,7 +715,7 @@ class Custom_Cookie_CMP
       <div class="wrap ccc-admin-wrap">
          <h1><?php esc_html_e('Custom Cookie CMP', 'custom-cookie-cmp'); ?></h1>
 
-         <?php if (isset($_GET['ccc_reset']) && $_GET['ccc_reset'] === '1') : ?>
+         <?php if (isset($_GET['ccc_reset']) && $_GET['ccc_reset'] === '1' && isset($_GET['_wpnonce']) && wp_verify_nonce(sanitize_key($_GET['_wpnonce']), 'ccc_reset_notice')) : ?>
             <div class="notice notice-success is-dismissible">
                <p><?php esc_html_e('Settings have been reset to defaults.', 'custom-cookie-cmp'); ?></p>
             </div>
