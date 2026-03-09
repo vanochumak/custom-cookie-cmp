@@ -3,7 +3,7 @@
 /**
  * Plugin Name: Custom Cookie CMP
  * Description: Lightweight Cookie Consent Management Platform with Google Consent Mode v2 support, customizable banner and popup, multilingual texts via Polylang and WPML.
- * Version: 1.2.0
+ * Version: 1.2.1
  * Author: Ivan Chumak
  * Text Domain: custom-cookie-cmp
  * Domain Path: /languages
@@ -25,7 +25,7 @@ define('CCC_DONATION_URL', 'https://ko-fi.com/vanochumak');
 class Custom_Cookie_CMP
 {
    const OPTION_KEY = 'custom_cookie_cmp_options';
-   const VERSION    = '1.2.0';
+   const VERSION    = '1.2.1';
 
 
    private static $instance = null;
@@ -154,6 +154,9 @@ class Custom_Cookie_CMP
          'enabled'           => 1,
          'hide_manage_btn'   => 0,
          'banner_width'      => '',
+         'btn_border_radius'   => 4,
+         'popup_border_radius' => 4,
+         'disabled_locales'    => array(),
          'consent_expiry'    => 365,
          'active_cats'       => array( // Which categories to show
             'marketing'   => 1,
@@ -368,6 +371,30 @@ class Custom_Cookie_CMP
          'custom_cookie_cmp_main'
       );
 
+      add_settings_field(
+         'btn_border_radius',
+         __('Button border radius (px)', 'custom-cookie-cmp'),
+         array($this, 'field_btn_border_radius'),
+         'custom-cookie-cmp',
+         'custom_cookie_cmp_main'
+      );
+
+      add_settings_field(
+         'popup_border_radius',
+         __('Popup border radius (px)', 'custom-cookie-cmp'),
+         array($this, 'field_popup_border_radius'),
+         'custom-cookie-cmp',
+         'custom_cookie_cmp_main'
+      );
+
+      add_settings_field(
+         'disabled_locales',
+         __('Disable for languages', 'custom-cookie-cmp'),
+         array($this, 'field_disabled_locales'),
+         'custom-cookie-cmp',
+         'custom_cookie_cmp_main'
+      );
+
       add_settings_section(
          'custom_cookie_cmp_texts',
          __('Texts per language', 'custom-cookie-cmp'),
@@ -393,6 +420,64 @@ class Custom_Cookie_CMP
    <?php
    }
 
+   public function field_btn_border_radius()
+   {
+      $options = $this->get_options();
+   ?>
+      <input type="number" class="small-text" min="0" max="50"
+         name="<?php echo esc_attr(self::OPTION_KEY); ?>[btn_border_radius]"
+         value="<?php echo esc_attr($options['btn_border_radius']); ?>">
+      <p class="description"><?php esc_html_e('Border radius in pixels for all buttons and popup (0–50). Default: 4.', 'custom-cookie-cmp'); ?></p>
+   <?php
+   }
+
+   public function field_popup_border_radius()
+   {
+      $options = $this->get_options();
+   ?>
+      <input type="number" class="small-text" min="0" max="50"
+         name="<?php echo esc_attr(self::OPTION_KEY); ?>[popup_border_radius]"
+         value="<?php echo esc_attr($options['popup_border_radius']); ?>">
+      <p class="description"><?php esc_html_e('Border radius in pixels for the cookie popup modal (0–50). Default: 4.', 'custom-cookie-cmp'); ?></p>
+   <?php
+   }
+
+   public function field_disabled_locales()
+   {
+      $options  = $this->get_options();
+      $disabled = $options['disabled_locales'] ?? array();
+      $locales  = $this->get_supported_locales();
+
+      if (count($locales) === 1 && $locales[0] === get_locale()) {
+         echo '<p class="description">' . esc_html__('No multilingual plugin detected. This feature requires Polylang or WPML.', 'custom-cookie-cmp') . '</p>';
+         return;
+      }
+   ?>
+      <fieldset>
+         <?php foreach ($locales as $locale) : ?>
+            <label style="display:block; margin-bottom:5px;">
+               <input type="checkbox"
+                  name="<?php echo esc_attr(self::OPTION_KEY); ?>[disabled_locales][]"
+                  value="<?php echo esc_attr($locale); ?>"
+                  <?php checked(in_array($locale, $disabled, true)); ?> />
+               <?php echo esc_html(strtoupper($locale)); ?>
+            </label>
+         <?php endforeach; ?>
+      </fieldset>
+      <p class="description"><?php esc_html_e('The cookie banner will not be shown for checked languages.', 'custom-cookie-cmp'); ?></p>
+   <?php
+   }
+
+   private function is_locale_disabled()
+   {
+      $options  = $this->get_options();
+      $disabled = $options['disabled_locales'] ?? array();
+      if (empty($disabled)) {
+         return false;
+      }
+      return in_array($this->get_locale_code(), $disabled, true);
+   }
+
    public function field_consent_expiry()
    {
       $options = $this->get_options();
@@ -408,10 +493,22 @@ class Custom_Cookie_CMP
    {
       $output = $this->get_options();
 
-      $output['enabled']         = empty($input['enabled']) ? 0 : 1;
-      $output['hide_manage_btn'] = empty($input['hide_manage_btn']) ? 0 : 1;
-      $output['banner_width']    = sanitize_text_field($input['banner_width'] ?? '');
-      $output['consent_expiry']  = max(1, min(730, (int) ($input['consent_expiry'] ?? 365)));
+      $output['enabled']           = empty($input['enabled']) ? 0 : 1;
+      $output['hide_manage_btn']   = empty($input['hide_manage_btn']) ? 0 : 1;
+      $output['banner_width']      = sanitize_text_field($input['banner_width'] ?? '');
+      $output['btn_border_radius']   = max(0, min(50, (int) ($input['btn_border_radius'] ?? 4)));
+      $output['popup_border_radius'] = max(0, min(50, (int) ($input['popup_border_radius'] ?? 4)));
+      $output['consent_expiry']      = max(1, min(730, (int) ($input['consent_expiry'] ?? 365)));
+
+      $output['disabled_locales'] = array();
+      if (!empty($input['disabled_locales']) && is_array($input['disabled_locales'])) {
+         foreach ($input['disabled_locales'] as $locale) {
+            $locale = sanitize_key($locale);
+            if ($locale) {
+               $output['disabled_locales'][] = $locale;
+            }
+         }
+      }
 
       // Categories
       $output['active_cats']['marketing']   = !empty($input['active_cats']['marketing']) ? 1 : 0;
@@ -773,6 +870,10 @@ class Custom_Cookie_CMP
          return;
       }
 
+      if ($this->is_locale_disabled()) {
+         return;
+      }
+
       wp_enqueue_style(
          'custom-cookie-cmp',
          plugins_url('assets/css/cookie-cmp.css', __FILE__),
@@ -798,8 +899,10 @@ class Custom_Cookie_CMP
          'active_cats'   => $options['active_cats'],              // For JS
          'texts'         => $texts,
          'locale'        => $locale,
-         'banner_width'  => $options['banner_width'] ?? '',
-         'cookieName'      => 'ccc_consent_v2',
+         'banner_width'      => $options['banner_width'] ?? '',
+         'btn_border_radius'   => (int) ($options['btn_border_radius'] ?? 4),
+         'popup_border_radius' => (int) ($options['popup_border_radius'] ?? 4),
+         'cookieName'        => 'ccc_consent_v2',
          'cookieExpiry'    => (int) ($options['consent_expiry'] ?? 365),
          'consentDefaults' => $this->get_consent_defaults(),
       );
@@ -813,6 +916,10 @@ class Custom_Cookie_CMP
       $cats    = $options['active_cats'];
 
       if (empty($options['enabled'])) {
+         return;
+      }
+
+      if ($this->is_locale_disabled()) {
          return;
       }
    ?>
@@ -912,6 +1019,9 @@ class Custom_Cookie_CMP
    {
       $options = $this->get_options();
       if (empty($options['enabled'])) {
+         return;
+      }
+      if ($this->is_locale_disabled()) {
          return;
       }
       $defaults = $this->get_consent_defaults();

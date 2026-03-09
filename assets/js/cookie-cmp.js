@@ -133,6 +133,8 @@
       root.style.setProperty('--ccc-popup-decline-text', colors.popup_btn_decline_text || '#2c3338');
       root.style.setProperty('--ccc-popup-accept-color', colors.popup_btn_accept_text || '#2271b1');
       root.style.setProperty('--ccc-banner-width', width);
+      root.style.setProperty('--ccc-radius', (config.btn_border_radius !== undefined ? config.btn_border_radius : 4) + 'px');
+      root.style.setProperty('--ccc-popup-radius', (config.popup_border_radius !== undefined ? config.popup_border_radius : 4) + 'px');
    }
 
    /* -------- Banner / Popup visibility -------- */
