@@ -1,9 +1,9 @@
 (function () {
-   if (typeof window.CCC_DATA === 'undefined') {
+   if (typeof window.CUSTOMCOOKIECMP_DATA === 'undefined') {
       return;
    }
 
-   var config = window.CCC_DATA;
+   var config = window.CUSTOMCOOKIECMP_DATA;
 
    /* -------- Cookie helpers -------- */
 

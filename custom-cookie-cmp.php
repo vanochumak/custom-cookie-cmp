@@ -3,7 +3,7 @@
 /**
  * Plugin Name: Custom Cookie CMP
  * Description: Lightweight Cookie Consent Management Platform with Google Consent Mode v2 support, customizable banner and popup, multilingual texts via Polylang and WPML.
- * Version: 1.2.1
+ * Version: 1.2.2
  * Author: Ivan Chumak
  * Text Domain: custom-cookie-cmp
  * Domain Path: /languages
@@ -19,13 +19,13 @@ if (! defined('ABSPATH')) {
 
 // ---- Donation notice config ----
 // Comment out the line below to disable the donation notice on your own sites
-define('CCC_DONATION_NOTICE', true);
-define('CCC_DONATION_URL', 'https://ko-fi.com/vanochumak');
+define('CUSTOMCOOKIECMP_DONATION_NOTICE', true);
+define('CUSTOMCOOKIECMP_DONATION_URL', 'https://ko-fi.com/vanochumak');
 
 class Custom_Cookie_CMP
 {
    const OPTION_KEY = 'custom_cookie_cmp_options';
-   const VERSION    = '1.2.1';
+   const VERSION    = '1.2.2';
 
 
    private static $instance = null;
@@ -49,14 +49,12 @@ class Custom_Cookie_CMP
       add_action('wp_enqueue_scripts', array($this, 'enqueue_assets'));
       add_action('wp_footer', array($this, 'render_banner'));
 
-      add_action('wp_head', array($this, 'print_initial_consent_mode'), 5);
-
-      add_action('admin_post_ccc_reset_defaults', array($this, 'handle_reset_defaults'));
+      add_action('admin_post_customcookiecmp_reset_defaults', array($this, 'handle_reset_defaults'));
 
       add_filter('plugin_action_links_' . plugin_basename(__FILE__), array($this, 'add_settings_link'));
 
       add_action('admin_notices', array($this, 'render_donation_notice'));
-      add_action('wp_ajax_ccc_dismiss_donation', array($this, 'handle_dismiss_donation'));
+      add_action('wp_ajax_customcookiecmp_dismiss_donation', array($this, 'handle_dismiss_donation'));
    }
 
    public function add_settings_link($links)
@@ -68,8 +66,8 @@ class Custom_Cookie_CMP
 
    public function render_donation_notice()
    {
-      // To disable: comment out define('CCC_DONATION_NOTICE', true) at the top of the file
-      if (! defined('CCC_DONATION_NOTICE') || ! CCC_DONATION_NOTICE) {
+      // To disable: comment out define('CUSTOMCOOKIECMP_DONATION_NOTICE', true) at the top of the file
+      if (! defined('CUSTOMCOOKIECMP_DONATION_NOTICE') || ! CUSTOMCOOKIECMP_DONATION_NOTICE) {
          return;
       }
 
@@ -79,21 +77,21 @@ class Custom_Cookie_CMP
       }
 
       $user_id      = get_current_user_id();
-      $dismissed_at = (int) get_user_meta($user_id, 'ccc_donation_dismissed', true);
+      $dismissed_at = (int) get_user_meta($user_id, 'customcookiecmp_donation_dismissed', true);
 
       if ($dismissed_at && (time() - $dismissed_at) < (15 * DAY_IN_SECONDS)) {
-         return;
+         return; 
       }
 ?>
-      <div class="notice notice-info ccc-donation-notice" id="ccc-donation-notice" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;padding:12px 16px;">
+      <div class="notice notice-info customcookiecmp-donation-notice" id="customcookiecmp-donation-notice" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;padding:12px 16px;">
          <p style="margin:0;">
             <?php esc_html_e('Custom Cookie CMP is free and actively maintained. If it saves you time or helps your clients, consider supporting its development ☕', 'custom-cookie-cmp'); ?>
          </p>
          <span style="display:flex;gap:8px;align-items:center;flex-shrink:0;">
-            <a href="<?php echo esc_url(CCC_DONATION_URL); ?>" target="_blank" rel="noopener noreferrer" class="button button-primary">
+            <a href="<?php echo esc_url(CUSTOMCOOKIECMP_DONATION_URL); ?>" target="_blank" rel="noopener noreferrer" class="button button-primary">
                <?php esc_html_e('Support Development on Ko-fi', 'custom-cookie-cmp'); ?>
             </a>
-            <button type="button" class="button ccc-donation-dismiss" data-nonce="<?php echo esc_attr(wp_create_nonce('ccc_dismiss_donation')); ?>">
+            <button type="button" class="button customcookiecmp-donation-dismiss" data-nonce="<?php echo esc_attr(wp_create_nonce('customcookiecmp_dismiss_donation')); ?>">
                <?php esc_html_e('Dismiss', 'custom-cookie-cmp'); ?>
             </button>
          </span>
@@ -103,8 +101,8 @@ class Custom_Cookie_CMP
 
    public function handle_dismiss_donation()
    {
-      check_ajax_referer('ccc_dismiss_donation', 'nonce');
-      update_user_meta(get_current_user_id(), 'ccc_donation_dismissed', time());
+      check_ajax_referer('customcookiecmp_dismiss_donation', 'nonce');
+      update_user_meta(get_current_user_id(), 'customcookiecmp_donation_dismissed', time());
       wp_send_json_success();
    }
 
@@ -204,14 +202,14 @@ class Custom_Cookie_CMP
       }
 
       wp_enqueue_style(
-         'ccc-admin',
+         'customcookiecmp-admin',
          plugins_url('assets/admin.css', __FILE__),
          array(),
          self::VERSION
       );
 
       wp_enqueue_script(
-         'ccc-admin',
+         'customcookiecmp-admin',
          plugins_url('assets/admin.js', __FILE__),
          array('jquery', 'wp-color-picker'),
          self::VERSION,
@@ -275,13 +273,13 @@ class Custom_Cookie_CMP
       if (! current_user_can('manage_options')) {
          wp_die(esc_html__('You do not have sufficient permissions.', 'custom-cookie-cmp'));
       }
-      check_admin_referer('ccc_reset_defaults');
+      check_admin_referer('customcookiecmp_reset_defaults');
 
       delete_option(self::OPTION_KEY);
       $this->options_cache = null;
 
       wp_safe_redirect(add_query_arg(
-         array('page' => 'custom-cookie-cmp', 'ccc_reset' => '1', '_wpnonce' => wp_create_nonce('ccc_reset_notice')),
+         array('page' => 'custom-cookie-cmp', 'customcookiecmp_reset' => '1', '_wpnonce' => wp_create_nonce('customcookiecmp_reset_notice')),
          admin_url('options-general.php')
       ));
       exit;
@@ -696,7 +694,7 @@ class Custom_Cookie_CMP
 
       foreach ($locales as $i => $locale) :
          $texts        = isset($options['texts_' . $locale]) ? $options['texts_' . $locale] : $this->get_texts($locale);
-         $eid          = 'ccc_' . preg_replace('/[^a-z0-9]/', '_', strtolower($locale));
+         $eid          = 'customcookiecmp_' . preg_replace('/[^a-z0-9]/', '_', strtolower($locale));
          $field_prefix = self::OPTION_KEY . '[texts][' . $locale . ']';
          $tabs         = array(
             'banner'  => __('Banner', 'custom-cookie-cmp'),
@@ -812,7 +810,7 @@ class Custom_Cookie_CMP
       <div class="wrap ccc-admin-wrap">
          <h1><?php esc_html_e('Custom Cookie CMP', 'custom-cookie-cmp'); ?></h1>
 
-         <?php if (isset($_GET['ccc_reset']) && $_GET['ccc_reset'] === '1' && isset($_GET['_wpnonce']) && wp_verify_nonce(sanitize_key($_GET['_wpnonce']), 'ccc_reset_notice')) : ?>
+         <?php if (isset($_GET['customcookiecmp_reset']) && $_GET['customcookiecmp_reset'] === '1' && isset($_GET['_wpnonce']) && wp_verify_nonce(sanitize_key($_GET['_wpnonce']), 'customcookiecmp_reset_notice')) : ?>
             <div class="notice notice-success is-dismissible">
                <p><?php esc_html_e('Settings have been reset to defaults.', 'custom-cookie-cmp'); ?></p>
             </div>
@@ -820,7 +818,7 @@ class Custom_Cookie_CMP
 
          <div class="ccc-admin-layout">
             <div class="ccc-admin-main">
-               <form id="ccc-settings-form" method="post" action="options.php">
+               <form id="customcookiecmp-settings-form" method="post" action="options.php">
                   <?php settings_fields('custom_cookie_cmp_group'); ?>
                   <?php do_settings_sections('custom-cookie-cmp'); ?>
                </form>
@@ -830,7 +828,7 @@ class Custom_Cookie_CMP
                <div class="ccc-admin-sidebar-box">
                   <div class="ccc-sidebar-title"><?php esc_html_e('Custom Cookie CMP', 'custom-cookie-cmp'); ?></div>
                   <div class="ccc-sidebar-body">
-                     <button type="submit" form="ccc-settings-form" class="button button-primary button-large" style="width:100%;justify-content:center;">
+                     <button type="submit" form="customcookiecmp-settings-form" class="button button-primary button-large" style="width:100%;justify-content:center;">
                         <?php esc_html_e('Save Changes', 'custom-cookie-cmp'); ?>
                      </button>
                   </div>
@@ -843,8 +841,8 @@ class Custom_Cookie_CMP
                         <?php esc_html_e('Restore all settings to their default values.', 'custom-cookie-cmp'); ?>
                      </p>
                      <form method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>">
-                        <input type="hidden" name="action" value="ccc_reset_defaults">
-                        <?php wp_nonce_field('ccc_reset_defaults'); ?>
+                        <input type="hidden" name="action" value="customcookiecmp_reset_defaults">
+                        <?php wp_nonce_field('customcookiecmp_reset_defaults'); ?>
                         <button type="submit" class="button button-link-delete"
                            onclick="return confirm('<?php echo esc_js(__('Reset all settings to defaults? This cannot be undone.', 'custom-cookie-cmp')); ?>')">
                            <?php esc_html_e('Reset to defaults', 'custom-cookie-cmp'); ?>
@@ -907,7 +905,17 @@ class Custom_Cookie_CMP
          'consentDefaults' => $this->get_consent_defaults(),
       );
 
-      wp_localize_script('custom-cookie-cmp', 'CCC_DATA', $data);
+      wp_localize_script('custom-cookie-cmp', 'CUSTOMCOOKIECMP_DATA', $data);
+
+      // Output Google Consent Mode default configuration in <head> using wp_add_inline_script.
+      // A handle with no src outputs only the inline block, placed before the main script.
+      wp_register_script('customcookiecmp-consent-init', false, array(), '1.2.2', false);
+      wp_enqueue_script('customcookiecmp-consent-init');
+      $defaults = $this->get_consent_defaults();
+      wp_add_inline_script(
+         'customcookiecmp-consent-init',
+         'window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag("consent","default",' . wp_json_encode($defaults) . ');'
+      );
    }
 
    public function render_banner()
@@ -1015,27 +1023,7 @@ class Custom_Cookie_CMP
    <?php
    }
 
-   public function print_initial_consent_mode()
-   {
-      $options = $this->get_options();
-      if (empty($options['enabled'])) {
-         return;
-      }
-      if ($this->is_locale_disabled()) {
-         return;
-      }
-      $defaults = $this->get_consent_defaults();
-   ?>
-      <script>
-         window.dataLayer = window.dataLayer || [];
-
-         function gtag() {
-            dataLayer.push(arguments);
-         }
-         gtag('consent', 'default', <?php echo wp_json_encode($defaults); ?>);
-      </script>
-<?php
-   }
 }
+
 
 Custom_Cookie_CMP::instance();

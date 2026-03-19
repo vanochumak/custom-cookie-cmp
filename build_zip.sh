@@ -37,6 +37,9 @@ zip -r "$ZIP_PATH" "$PLUGIN_DIR_NAME" \
   -x "$PLUGIN_DIR_NAME/vendor/*" \
   -x "$PLUGIN_DIR_NAME/*.log" \
   -x "$PLUGIN_DIR_NAME/.DS_Store" \
-  -x "$PLUGIN_DIR_NAME/**/.DS_Store"
+  -x "$PLUGIN_DIR_NAME/**/.DS_Store" \
+  -x "$PLUGIN_DIR_NAME/assets/banner-*.png" \
+  -x "$PLUGIN_DIR_NAME/assets/icon-*.png" \
+  -x "$PLUGIN_DIR_NAME/assets/screenshot-*.png"
 
 echo "Done: $ZIP_PATH"
