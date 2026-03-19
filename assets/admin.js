@@ -2,17 +2,17 @@ jQuery(document).ready(function ($) {
    $(".ccc-color-field > input[type='text']").wpColorPicker();
 
    // Sync all TinyMCE editors to their textareas before form submit
-   $('#ccc-settings-form').on('submit', function () {
+   $('#customcookiecmp-settings-form').on('submit', function () {
       if (typeof tinyMCE !== 'undefined') {
          tinyMCE.triggerSave();
       }
    });
 
    // Donation notice dismiss
-   $(document).on('click', '.ccc-donation-dismiss', function () {
+   $(document).on('click', '.customcookiecmp-donation-dismiss', function () {
       var nonce  = $(this).data('nonce');
-      var $notice = $('#ccc-donation-notice');
-      $.post(ajaxurl, { action: 'ccc_dismiss_donation', nonce: nonce }, function () {
+      var $notice = $('#customcookiecmp-donation-notice');
+      $.post(ajaxurl, { action: 'customcookiecmp_dismiss_donation', nonce: nonce }, function () {
          $notice.fadeOut(300, function () { $notice.remove(); });
       });
    });

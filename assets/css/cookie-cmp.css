@@ -6,6 +6,7 @@
    --ccc-btn-secondary-bg: #444444;
    --ccc-btn-secondary-text: #ffffff;
    --ccc-radius: 4px;
+   --ccc-popup-radius: 4px;
    --ccc-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
    --ccc-zindex: 99999;
    --ccc-transition: 0.2s ease-in-out;
@@ -48,7 +49,7 @@
    font-family: var(--ccc-font-family);
    box-shadow: var(--ccc-shadow);
    padding: 16px 0;
-   z-index: 999999 !important; /* On top of everything */
+   z-index: var(--ccc-zindex);
    transform: translateY(130%);
    transition: transform var(--ccc-transition);
 }
@@ -71,12 +72,12 @@
 
 #ccc-banner .ccc-banner-title {
    margin: 0 0 4px;
-   font-size: 16px;
+   font-size: 18px;
    font-weight: 600;
 }
 
 #ccc-banner .ccc-banner-desc {
-   font-size: 14px;
+   font-size: 16px;
    line-height: 1.4;
 }
 
@@ -90,9 +91,9 @@
 .ccc-btn {
    font-family: inherit;
    font-weight: 500;
-   font-size: 14px;
+   font-size: 15px;
    border-radius: var(--ccc-radius);
-   padding: 8px 14px;
+   padding: 8px 16px;
    border: 0;
    cursor: pointer;
    transition: background var(--ccc-transition), color var(--ccc-transition), border-color var(--ccc-transition);
@@ -135,7 +136,9 @@
    max-width: 460px;
    border-radius: var(--ccc-radius);
 }
-.ccc-position-bottom-right .ccc-banner-inner, .ccc-position-bottom-left .ccc-banner-inner {
+
+.ccc-position-bottom-right .ccc-banner-inner,
+.ccc-position-bottom-left .ccc-banner-inner {
    grid-template-columns: 1fr !important;
    gap: 12px !important;
 }
@@ -170,7 +173,7 @@
    color: #111111;
    max-width: 720px;
    width: 100%;
-   border-radius: var(--ccc-radius);
+   border-radius: var(--ccc-popup-radius);
    box-shadow: var(--ccc-shadow);
    font-family: var(--ccc-font-family);
    display: flex;
@@ -212,6 +215,7 @@
 
 .ccc-popup-body p {
    margin-top: 0;
+    letter-spacing: normal;
 }
 
 .ccc-category {
@@ -229,13 +233,13 @@
 
 .ccc-category-title {
    margin: 0 0 4px;
-   font-size: 15px;
+   font-size: 16px;
    font-weight: 600;
 }
 
 .ccc-category-description {
    margin: 0;
-   font-size: 13px;
+   font-size: 14px;
    color: #555;
 }
 
@@ -244,7 +248,7 @@
 }
 
 .ccc-toggle-label {
-   font-size: 13px;
+   font-size: 14px;
    color: #666;
 }
 
@@ -297,33 +301,82 @@
    border-top: 1px solid #e0e0e0;
    display: flex;
    justify-content: flex-end;
-   gap: 8px;
+   gap: 10px;
    flex-wrap: wrap;
 }
 
 /* Responsive */
 
-@media (max-width: 600px) {
-   #ccc-banner .ccc-banner-inner {
-      grid-template-columns: 1fr;
-   }
-
-   #ccc-banner .ccc-banner-actions {
-      margin-left: 0;
-   }
-
-   .ccc-popup {
-      max-width: 100%;
-   }
-}
-
 body.cookie-popup-open {
    overflow: hidden;
 }
 
-@media (max-width: 768px) {
+
+@media (max-width: 1024px) {
    #ccc-banner .ccc-banner-inner {
       grid-template-columns: 1fr;
-      gap: 15px;
+      gap: 10px;
+   }
+}
+
+@media (min-width: 320px) and (max-width: 576px) {
+   #ccc-banner {
+      padding: 12px 0;
+   }
+
+
+
+   #ccc-banner .ccc-banner-title {
+      font-size: 14px;
+   }
+
+   #ccc-banner .ccc-banner-desc {
+      font-size: 13px;
+   }
+
+   #ccc-banner .ccc-banner-actions {
+      margin-left: 0;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+   }
+
+   #ccc-banner .ccc-btn-accept-all {
+      grid-column: 1 / -1;
+   }
+
+   .ccc-btn {
+      font-size: 13px;
+      padding: 8px 10px;
+      text-align: center;
+   }
+
+   .ccc-popup {
+      max-height: 85vh;
+   }
+
+   .ccc-popup-header h3 {
+      font-size: 16px;
+   }
+
+   .ccc-popup-footer {
+       margin-left: 0;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+   }
+
+   .ccc-popup-footer .ccc-btn-accept-all {
+      grid-column: 1 / -1;
+   }
+
+
+   .ccc-popup-footer .ccc-btn {
+      width: 100%;
+   }
+
+   .ccc-popup-body p {
+      font-size: 13px;
+      line-height: 1.5;
    }
 }
