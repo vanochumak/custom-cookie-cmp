@@ -3,7 +3,7 @@
 /**
  * Plugin Name: Custom Cookie CMP
  * Description: Lightweight Cookie Consent Management Platform with Google Consent Mode v2 support, customizable banner and popup, multilingual texts via Polylang and WPML.
- * Version: 1.2.2
+ * Version: 1.2.3
  * Author: Ivan Chumak
  * Text Domain: custom-cookie-cmp
  * Domain Path: /languages
@@ -25,7 +25,7 @@ define('CUSTOMCOOKIECMP_DONATION_URL', 'https://ko-fi.com/vanochumak');
 class Custom_Cookie_CMP
 {
    const OPTION_KEY = 'custom_cookie_cmp_options';
-   const VERSION    = '1.2.2';
+   const VERSION    = '1.2.3';
 
 
    private static $instance = null;
@@ -48,6 +48,7 @@ class Custom_Cookie_CMP
 
       add_action('wp_enqueue_scripts', array($this, 'enqueue_assets'));
       add_action('wp_footer', array($this, 'render_banner'));
+      add_filter('script_loader_tag', array($this, 'add_script_attributes'), 10, 3);
 
       add_action('admin_post_customcookiecmp_reset_defaults', array($this, 'handle_reset_defaults'));
 
@@ -217,6 +218,19 @@ class Custom_Cookie_CMP
       );
 
       wp_enqueue_style('wp-color-picker');
+   }
+
+   /**
+    * Add defer attribute to the frontend banner script.
+    * The script is already loaded in the footer; defer makes it explicit and
+    * signals to crawlers/audits that it is non-render-blocking.
+    */
+   public function add_script_attributes($tag, $handle)
+   {
+      if ('custom-cookie-cmp' === $handle) {
+         return str_replace(' src=', ' defer src=', $tag);
+      }
+      return $tag;
    }
 
    public function get_texts($locale = '')
@@ -860,6 +874,42 @@ class Custom_Cookie_CMP
 
    /* ----------Frontend ---------- */
 
+   /**
+    * Determines whether the full frontend UI assets (banner CSS + JS) should be loaded.
+    *
+    * Returns false when:
+    * - running in wp-admin
+    * - the plugin is disabled
+    * - the current locale is disabled
+    * - the visitor already has a saved consent cookie
+    *
+    * Returns true for first-time visitors who still need to see the banner.
+    * Use the standalone customcookiecmp_should_load_frontend_assets() wrapper externally.
+    */
+   public function should_load_frontend_assets()
+   {
+      if (is_admin()) {
+         return false;
+      }
+
+      $options = $this->get_options();
+
+      if (empty($options['enabled'])) {
+         return false;
+      }
+
+      if ($this->is_locale_disabled()) {
+         return false;
+      }
+
+      // Returning visitor — consent already recorded, banner not needed.
+      if (! empty($_COOKIE['ccc_consent_v2'])) {
+         return false;
+      }
+
+      return true;
+   }
+
    public function enqueue_assets()
    {
       $options = $this->get_options();
@@ -872,16 +922,44 @@ class Custom_Cookie_CMP
          return;
       }
 
+      // 1. Always: output Google Consent Mode defaults in <head> before any analytics tag.
+      //    A handle with no src outputs only the inline block; last arg false = <head>.
+      wp_register_script('customcookiecmp-consent-init', false, array(), self::VERSION, false);
+      wp_enqueue_script('customcookiecmp-consent-init');
+      $defaults = $this->get_consent_defaults();
+      wp_add_inline_script(
+         'customcookiecmp-consent-init',
+         'window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag("consent","default",' . wp_json_encode($defaults) . ');'
+      );
+
+      // Use minified assets in production; fall back to source files when SCRIPT_DEBUG is on.
+      $suffix = (defined('SCRIPT_DEBUG') && SCRIPT_DEBUG) ? '' : '.min';
+
+      // 2. Returning visitor — consent cookie already present.
+      //    A tiny inline <style> keeps the banner elements hidden (replaces the full CSS file).
+      //    Only the consent-restore inline script is needed; skip the heavy JS/CSS files.
+      if (! empty($_COOKIE['ccc_consent_v2'])) {
+         wp_register_style('custom-cookie-cmp', false, array(), self::VERSION);
+         wp_enqueue_style('custom-cookie-cmp');
+         wp_add_inline_style('custom-cookie-cmp', '#ccc-banner,#ccc-popup-backdrop{display:none!important}');
+         wp_add_inline_script(
+            'customcookiecmp-consent-init',
+            '(function(){try{var a=document.cookie.split(";");for(var i=0;i<a.length;i++){var c=a[i].trim();if(c.indexOf("ccc_consent_v2=")===0){var d=JSON.parse(decodeURIComponent(c.substring(15)));if(d&&typeof d==="object"){gtag("consent","update",d);window.CustomCookieCMP=window.CustomCookieCMP||{};window.CustomCookieCMP.consent=d;}break;}}}catch(e){}})();'
+         );
+         return;
+      }
+
+      // 3. First-time visitor — load full CSS + JS assets (minified in production).
       wp_enqueue_style(
          'custom-cookie-cmp',
-         plugins_url('assets/css/cookie-cmp.css', __FILE__),
+         plugins_url('assets/css/cookie-cmp' . $suffix . '.css', __FILE__),
          array(),
          self::VERSION
       );
 
       wp_enqueue_script(
          'custom-cookie-cmp',
-         plugins_url('assets/js/cookie-cmp.js', __FILE__),
+         plugins_url('assets/js/cookie-cmp' . $suffix . '.js', __FILE__),
          array(),
          self::VERSION,
          true
@@ -891,45 +969,40 @@ class Custom_Cookie_CMP
       $texts  = $this->get_texts($locale);
 
       $data = array(
-         'position'      => $options['position'],
-         'colors'        => $options['colors'],
-         'hide_manage'   => !empty($options['hide_manage_btn']), // For JS
-         'active_cats'   => $options['active_cats'],              // For JS
-         'texts'         => $texts,
-         'locale'        => $locale,
-         'banner_width'      => $options['banner_width'] ?? '',
-         'btn_border_radius'   => (int) ($options['btn_border_radius'] ?? 4),
+         'position'           => $options['position'],
+         'colors'             => $options['colors'],
+         'hide_manage'        => ! empty($options['hide_manage_btn']),
+         'active_cats'        => $options['active_cats'],
+         'texts'              => $texts,
+         'locale'             => $locale,
+         'banner_width'       => $options['banner_width'] ?? '',
+         'btn_border_radius'  => (int) ($options['btn_border_radius'] ?? 4),
          'popup_border_radius' => (int) ($options['popup_border_radius'] ?? 4),
-         'cookieName'        => 'ccc_consent_v2',
-         'cookieExpiry'    => (int) ($options['consent_expiry'] ?? 365),
-         'consentDefaults' => $this->get_consent_defaults(),
+         'cookieName'         => 'ccc_consent_v2',
+         'cookieExpiry'       => (int) ($options['consent_expiry'] ?? 365),
+         'consentDefaults'    => $this->get_consent_defaults(),
       );
 
       wp_localize_script('custom-cookie-cmp', 'CUSTOMCOOKIECMP_DATA', $data);
-
-      // Output Google Consent Mode default configuration in <head> using wp_add_inline_script.
-      // A handle with no src outputs only the inline block, placed before the main script.
-      wp_register_script('customcookiecmp-consent-init', false, array(), '1.2.2', false);
-      wp_enqueue_script('customcookiecmp-consent-init');
-      $defaults = $this->get_consent_defaults();
-      wp_add_inline_script(
-         'customcookiecmp-consent-init',
-         'window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag("consent","default",' . wp_json_encode($defaults) . ');'
-      );
    }
 
    public function render_banner()
    {
+      // Render banner HTML for all frontend pages where the plugin is active.
+      // Do NOT gate on the consent cookie here — the JS handles show/hide,
+      // and the CSS keeps the banner off-screen (transform:translateY(130%)) by default.
+      if (is_admin()) {
+         return;
+      }
       $options = $this->get_options();
-      $cats    = $options['active_cats'];
-
       if (empty($options['enabled'])) {
          return;
       }
-
       if ($this->is_locale_disabled()) {
          return;
       }
+
+      $cats = $options['active_cats'];
    ?>
       <div id="ccc-banner" class="ccc-banner ccc-position-<?php echo esc_attr($options['position']); ?>" aria-hidden="true">
          <div class="ccc-banner-inner">
@@ -1027,3 +1100,16 @@ class Custom_Cookie_CMP
 
 
 Custom_Cookie_CMP::instance();
+
+/**
+ * Public helper — returns true when the cookie banner UI assets should be loaded.
+ *
+ * Useful for themes or other plugins that want to know whether a visitor
+ * still needs to see the consent banner (e.g. to conditionally render a
+ * "Manage cookies" trigger in a page builder).
+ *
+ * @return bool
+ */
+function customcookiecmp_should_load_frontend_assets() {
+   return Custom_Cookie_CMP::instance()->should_load_frontend_assets();
+}

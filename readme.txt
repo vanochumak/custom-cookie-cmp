@@ -4,7 +4,7 @@ Tags: cookie, gdpr, consent, cookie-banner, google-consent-mode
 Requires at least: 5.9
 Tested up to: 6.9
 Requires PHP: 7.4
-Stable tag: 1.2.2
+Stable tag: 1.2.3
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -57,6 +57,12 @@ Yes. The plugin is fully translation-ready and compatible with WPML and Polylang
 
 == Changelog ==
 
+= 1.2.3 =
+* Performance: frontend banner CSS and JS are now skipped for visitors who already have a saved consent cookie
+* Google Consent Mode: stored consent choices are now restored via a lightweight inline script on repeat visits, ensuring gtag("consent","update") fires correctly even without the full UI
+* Added customcookiecmp_should_load_frontend_assets() helper for themes and plugins
+* Version and asset cache-busting bumped to 1.2.3
+
 = 1.2.0 =
 * Added configurable consent expiry
 * Added Reset to defaults functionality
@@ -67,6 +73,9 @@ Yes. The plugin is fully translation-ready and compatible with WPML and Polylang
 * Initial release
 
 == Upgrade Notice ==
+
+= 1.2.3 =
+Performance improvement: banner CSS and JS are no longer loaded for returning visitors who have already made a consent choice. Google Consent Mode state is still correctly restored on every page load.
 
 = 1.2.0 =
 Improved stability and added new configuration options.
