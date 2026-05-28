@@ -119,7 +119,7 @@ class Custom_Cookie_CMP
       if (defined('ICL_LANGUAGE_CODE')) {
          return ICL_LANGUAGE_CODE;
       }
-      return determine_locale();
+      return sanitize_key(determine_locale());
    }
 
    private function get_supported_locales()
@@ -140,7 +140,7 @@ class Custom_Cookie_CMP
 
       // 3. If there is no language plugin — use the current site locale
       if (empty($locales)) {
-         $locales = array(get_locale());
+         $locales = array(sanitize_key(get_locale()));
       }
 
       return array_unique($locales);
