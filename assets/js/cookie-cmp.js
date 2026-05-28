@@ -118,7 +118,6 @@
 
    function applyStyles() {
       var colors = config.colors || {};
-      var width = config.banner_width ? config.banner_width : 'none';
       var root = document.documentElement;
 
       root.style.setProperty('--ccc-banner-bg', colors.banner_bg || '#222');
@@ -132,9 +131,49 @@
       root.style.setProperty('--ccc-popup-decline-bg', colors.popup_btn_decline_bg || '#f0f0f1');
       root.style.setProperty('--ccc-popup-decline-text', colors.popup_btn_decline_text || '#2c3338');
       root.style.setProperty('--ccc-popup-accept-color', colors.popup_btn_accept_text || '#2271b1');
-      root.style.setProperty('--ccc-banner-width', width);
+
+      if (colors.banner_link) {
+         root.style.setProperty('--ccc-banner-link-color', colors.banner_link);
+      } else {
+         root.style.removeProperty('--ccc-banner-link-color');
+      }
       root.style.setProperty('--ccc-radius', (config.btn_border_radius !== undefined ? config.btn_border_radius : 4) + 'px');
       root.style.setProperty('--ccc-popup-radius', (config.popup_border_radius !== undefined ? config.popup_border_radius : 4) + 'px');
+      root.style.setProperty('--ccc-banner-radius', (config.banner_border_radius !== undefined ? config.banner_border_radius : 4) + 'px');
+
+      if (config.banner_width) {
+         root.style.setProperty('--ccc-banner-width', config.banner_width);
+      } else {
+         root.style.removeProperty('--ccc-banner-width');
+      }
+
+      if (config.banner_inner_width) {
+         root.style.setProperty('--ccc-banner-inner-width', config.banner_inner_width);
+      } else {
+         root.style.removeProperty('--ccc-banner-inner-width');
+      }
+
+      if (config.banner_inner_padding !== undefined && config.banner_inner_padding !== '') {
+         root.style.setProperty('--ccc-banner-inner-padding', config.banner_inner_padding);
+      } else {
+         root.style.removeProperty('--ccc-banner-inner-padding');
+      }
+
+      if (config.btn_min_width) {
+         root.style.setProperty('--ccc-btn-min-width', config.btn_min_width);
+      }
+
+      if (config.banner_bottom_offset) {
+         root.style.setProperty('--ccc-banner-bottom-offset', config.banner_bottom_offset);
+      }
+
+      if (config.banner_padding) {
+         root.style.setProperty('--ccc-banner-padding', config.banner_padding);
+      }
+
+      if (config.banner_font_size) {
+         root.style.setProperty('--ccc-banner-font-size', config.banner_font_size);
+      }
    }
 
    /* -------- Banner / Popup visibility -------- */

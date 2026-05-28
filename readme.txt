@@ -4,7 +4,7 @@ Tags: cookie, gdpr, consent, cookie-banner, google-consent-mode
 Requires at least: 5.9
 Tested up to: 6.9
 Requires PHP: 7.4
-Stable tag: 1.2.3
+Stable tag: 1.3.0
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -57,6 +57,19 @@ Yes. The plugin is fully translation-ready and compatible with WPML and Polylang
 
 == Changelog ==
 
+= 1.3.0 =
+* Added "center (floating)" banner position
+* Added banner border radius setting
+* Added banner bottom offset setting
+* Added banner inline layout option (text and buttons in one row)
+* Added banner padding, font size, inner width and inner side padding settings
+* Added button min-width setting
+* Added hide "Decline all" button option
+* Added hide banner title option
+* Added banner link color field
+* CSS: switched banner inner layout from grid to flex for better responsiveness
+* CSS: new CSS variables for all new styling options
+
 = 1.2.3 =
 * Performance: frontend banner CSS and JS are now skipped for visitors who already have a saved consent cookie
 * Google Consent Mode: stored consent choices are now restored via a lightweight inline script on repeat visits, ensuring gtag("consent","update") fires correctly even without the full UI
@@ -73,6 +86,9 @@ Yes. The plugin is fully translation-ready and compatible with WPML and Polylang
 * Initial release
 
 == Upgrade Notice ==
+
+= 1.3.0 =
+Significant banner customization update: new layout options, positioning controls, and visual settings for the cookie banner. Fully backward compatible — existing settings remain unchanged.
 
 = 1.2.3 =
 Performance improvement: banner CSS and JS are no longer loaded for returning visitors who have already made a consent choice. Google Consent Mode state is still correctly restored on every page load.

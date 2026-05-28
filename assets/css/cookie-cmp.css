@@ -7,10 +7,13 @@
    --ccc-btn-secondary-text: #ffffff;
    --ccc-radius: 4px;
    --ccc-popup-radius: 4px;
+   --ccc-banner-radius: 0px;
+   --ccc-btn-min-width: 0;
+   --ccc-banner-padding: 16px 0;
+   --ccc-banner-font-size: 16px;
    --ccc-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
    --ccc-zindex: 99999;
    --ccc-transition: 0.2s ease-in-out;
-   --ccc-banner-width: none;
    --ccc-font-family: inherit;
 }
 
@@ -43,12 +46,13 @@
    position: fixed;
    left: 0;
    right: 0;
-   bottom: 0;
+   bottom: var(--ccc-banner-bottom-offset, 0px);
    background: var(--ccc-banner-bg);
    color: var(--ccc-banner-text);
    font-family: var(--ccc-font-family);
    box-shadow: var(--ccc-shadow);
-   padding: 16px 0;
+   border-radius: var(--ccc-banner-radius);
+   padding: var(--ccc-banner-padding);
    z-index: var(--ccc-zindex);
    transform: translateY(130%);
    transition: transform var(--ccc-transition);
@@ -60,14 +64,18 @@
 
 #ccc-banner .ccc-banner-inner {
    width: 100%;
-   max-width: var(--ccc-banner-width);
+   max-width: var(--ccc-banner-inner-width, none);
    margin: 0 auto;
-   padding: 0 20px;
+   padding: 0 var(--ccc-banner-inner-padding, 20px);
    box-sizing: border-box;
-   display: grid;
-   grid-template-columns: 1fr auto;
+   display: flex;
    align-items: center;
    gap: 32px;
+}
+
+#ccc-banner .ccc-banner-text {
+   flex: 1;
+   min-width: 0;   
 }
 
 #ccc-banner .ccc-banner-title {
@@ -77,8 +85,14 @@
 }
 
 #ccc-banner .ccc-banner-desc {
-   font-size: 16px;
+   font-size: var(--ccc-banner-font-size);
    line-height: 1.4;
+}
+
+#ccc-banner .ccc-banner-desc a,
+#ccc-banner .ccc-banner-title a {
+   color: var(--ccc-banner-link-color, currentColor);
+   text-decoration: underline;
 }
 
 #ccc-banner .ccc-banner-actions {
@@ -86,6 +100,7 @@
    display: flex;
    gap: 8px;
    flex-wrap: wrap;
+   align-self: center;
 }
 
 .ccc-btn {
@@ -96,6 +111,7 @@
    padding: 8px 16px;
    border: 0;
    cursor: pointer;
+   min-width: var(--ccc-btn-min-width);
    transition: background var(--ccc-transition), color var(--ccc-transition), border-color var(--ccc-transition);
 }
 
@@ -124,27 +140,56 @@
 .ccc-position-bottom-left {
    left: 16px !important;
    right: auto !important;
-   bottom: 16px !important;
+   bottom: var(--ccc-banner-bottom-offset, 16px) !important;
    max-width: 460px;
-   border-radius: var(--ccc-radius);
+   border-radius: var(--ccc-banner-radius) !important;
 }
 
 .ccc-position-bottom-right {
    right: 16px !important;
    left: auto !important;
-   bottom: 16px !important;
+   bottom: var(--ccc-banner-bottom-offset, 16px) !important;
    max-width: 460px;
-   border-radius: var(--ccc-radius);
+   border-radius: var(--ccc-banner-radius) !important;
 }
 
 .ccc-position-bottom-right .ccc-banner-inner,
 .ccc-position-bottom-left .ccc-banner-inner {
-   grid-template-columns: 1fr !important;
+   flex-direction: column !important;
+   align-items: flex-start !important;
    gap: 12px !important;
 }
 
-.ccc-position-bottom-full {
-   border-radius: 0;
+
+.ccc-position-center {
+   left: 50% !important;
+   right: auto !important;
+   bottom: var(--ccc-banner-bottom-offset, 16px) !important;
+   max-width: var(--ccc-banner-width, 720px);
+   width: calc(100% - 32px);
+   border-radius: var(--ccc-banner-radius) !important;
+   transform: translateX(-50%) translateY(130%);
+}
+
+#ccc-banner.ccc-position-center[aria-hidden="false"] {
+   transform: translateX(-50%) translateY(0);
+}
+
+.ccc-position-center .ccc-banner-inner {
+   flex-direction: column !important;
+   align-items: flex-start !important;
+   gap: 12px !important;
+   max-width: none !important;
+}
+
+/* Hide helpers */
+.ccc-no-decline .ccc-btn-decline-all { display: none; }
+.ccc-no-title .ccc-banner-title { display: none; }
+
+/* Inline layout: keep text + buttons on one row at all screen sizes */
+#ccc-banner.ccc-banner-inline .ccc-banner-inner {
+   flex-direction: row !important;
+   align-items: center !important;
 }
 
 /* Popup */
@@ -314,13 +359,12 @@ body.cookie-popup-open {
 
 @media (max-width: 1024px) {
    #ccc-banner .ccc-banner-inner {
-      grid-template-columns: 1fr;
-      gap: 10px;
+      gap: 16px;
    }
 }
 
 @media (min-width: 320px) and (max-width: 576px) {
-   #ccc-banner {
+   #ccc-banner:not(.ccc-banner-inline) {
       padding: 12px 0;
    }
 
@@ -336,13 +380,13 @@ body.cookie-popup-open {
 
    #ccc-banner .ccc-banner-actions {
       margin-left: 0;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
+      display: flex;
+      flex-direction: column;
       gap: 8px;
    }
 
    #ccc-banner .ccc-btn-accept-all {
-      grid-column: 1 / -1;
+      order: -1;
    }
 
    .ccc-btn {
