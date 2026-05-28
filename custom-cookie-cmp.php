@@ -3,7 +3,7 @@
 /**
  * Plugin Name: Custom Cookie CMP
  * Description: Lightweight Cookie Consent Management Platform with Google Consent Mode v2 support, customizable banner and popup, multilingual texts via Polylang and WPML.
- * Version: 1.3.1
+ * Version: 1.3.2
  * Author: Ivan Chumak
  * Text Domain: custom-cookie-cmp
  * Domain Path: /languages
@@ -25,7 +25,7 @@ define('CUSTOMCOOKIECMP_DONATION_URL', 'https://ko-fi.com/vanochumak');
 class Custom_Cookie_CMP
 {
    const OPTION_KEY = 'custom_cookie_cmp_options';
-   const VERSION    = '1.3.1';
+   const VERSION    = '1.3.2';
 
 
    private static $instance = null;
