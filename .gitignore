@@ -2,6 +2,9 @@
 CLAUDE.md
 PROJECT_LOG.md
 
+# Node build tools
+node_modules/
+
 # IDE
 .vscode/
 .idea/

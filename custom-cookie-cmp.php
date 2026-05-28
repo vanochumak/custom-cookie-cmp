@@ -3,7 +3,7 @@
 /**
  * Plugin Name: Custom Cookie CMP
  * Description: Lightweight Cookie Consent Management Platform with Google Consent Mode v2 support, customizable banner and popup, multilingual texts via Polylang and WPML.
- * Version: 1.3.0
+ * Version: 1.3.1
  * Author: Ivan Chumak
  * Text Domain: custom-cookie-cmp
  * Domain Path: /languages
@@ -25,7 +25,7 @@ define('CUSTOMCOOKIECMP_DONATION_URL', 'https://ko-fi.com/vanochumak');
 class Custom_Cookie_CMP
 {
    const OPTION_KEY = 'custom_cookie_cmp_options';
-   const VERSION    = '1.3.0';
+   const VERSION    = '1.3.1';
 
 
    private static $instance = null;
@@ -158,9 +158,8 @@ class Custom_Cookie_CMP
          'btn_min_width'        => '',
          'btn_border_radius'    => 4,
          'popup_border_radius'  => 4,
-         'banner_border_radius'  => 4,
+         'banner_border_radius'  => 0,
          'banner_bottom_offset'  => '',
-         'banner_inline_layout'  => 0,
          'banner_padding'        => '',
          'banner_font_size'      => '',
          'banner_inner_width'    => '',
@@ -467,14 +466,6 @@ class Custom_Cookie_CMP
       );
 
       add_settings_field(
-         'banner_inline_layout',
-         __('Inline layout (one row)', 'custom-cookie-cmp'),
-         array($this, 'field_banner_inline_layout'),
-         'custom-cookie-cmp',
-         'custom_cookie_cmp_main'
-      );
-
-      add_settings_field(
          'banner_padding',
          __('Banner padding', 'custom-cookie-cmp'),
          array($this, 'field_banner_padding'),
@@ -582,7 +573,7 @@ class Custom_Cookie_CMP
       <input type="number" class="small-text" min="0" max="50"
          name="<?php echo esc_attr(self::OPTION_KEY); ?>[banner_border_radius]"
          value="<?php echo esc_attr($options['banner_border_radius']); ?>">
-      <p class="description"><?php esc_html_e('Border radius in pixels for the banner wrapper (0–50). Default: 4. Visible for floating/center/corner positions.', 'custom-cookie-cmp'); ?></p>
+      <p class="description"><?php esc_html_e('Border radius in pixels for the banner wrapper (0–50). Default: 0. Visible for floating/center/corner positions.', 'custom-cookie-cmp'); ?></p>
    <?php
    }
 
@@ -598,16 +589,6 @@ class Custom_Cookie_CMP
    <?php
    }
 
-   public function field_banner_inline_layout()
-   {
-      $options = $this->get_options();
-   ?>
-      <label>
-         <input type="checkbox" name="<?php echo esc_attr(self::OPTION_KEY); ?>[banner_inline_layout]" value="1" <?php checked($options['banner_inline_layout'], 1); ?> />
-         <?php esc_html_e('Keep text and buttons on the same row (disables stacking on smaller screens)', 'custom-cookie-cmp'); ?>
-      </label>
-   <?php
-   }
 
    public function field_banner_padding()
    {
@@ -692,9 +673,8 @@ class Custom_Cookie_CMP
       $output['btn_min_width']        = sanitize_text_field($input['btn_min_width'] ?? '');
       $output['btn_border_radius']    = max(0, min(50, (int) ($input['btn_border_radius'] ?? 4)));
       $output['popup_border_radius']  = max(0, min(50, (int) ($input['popup_border_radius'] ?? 4)));
-      $output['banner_border_radius'] = max(0, min(50, (int) ($input['banner_border_radius'] ?? 4)));
+      $output['banner_border_radius'] = max(0, min(50, (int) ($input['banner_border_radius'] ?? 0)));
       $output['banner_bottom_offset'] = sanitize_text_field($input['banner_bottom_offset'] ?? '');
-      $output['banner_inline_layout'] = empty($input['banner_inline_layout']) ? 0 : 1;
       $output['banner_padding']       = sanitize_text_field($input['banner_padding'] ?? '');
       $output['banner_font_size']     = sanitize_text_field($input['banner_font_size'] ?? '');
       $output['banner_inner_width']   = sanitize_text_field($input['banner_inner_width'] ?? '');
@@ -1197,9 +1177,8 @@ class Custom_Cookie_CMP
          'btn_min_width'        => $options['btn_min_width'] ?? '',
          'btn_border_radius'    => (int) ($options['btn_border_radius'] ?? 4),
          'popup_border_radius'  => (int) ($options['popup_border_radius'] ?? 4),
-         'banner_border_radius' => (int) ($options['banner_border_radius'] ?? 4),
+         'banner_border_radius' => (int) ($options['banner_border_radius'] ?? 0),
          'banner_bottom_offset'  => $options['banner_bottom_offset'] ?? '',
-         'banner_inline_layout'  => !empty($options['banner_inline_layout']),
          'banner_padding'        => $options['banner_padding'] ?? '',
          'banner_font_size'      => $options['banner_font_size'] ?? '',
          'banner_inner_width'    => $options['banner_inner_width'] ?? '',
@@ -1235,9 +1214,6 @@ class Custom_Cookie_CMP
       }
       if (!empty($options['hide_banner_title'])) {
          $banner_cls .= ' ccc-no-title';
-      }
-      if (!empty($options['banner_inline_layout'])) {
-         $banner_cls .= ' ccc-banner-inline';
       }
    ?>
       <div id="ccc-banner" class="<?php echo esc_attr($banner_cls); ?>" aria-hidden="true">
