@@ -3,7 +3,7 @@
 /**
  * Plugin Name: Custom Cookie CMP
  * Description: Lightweight Cookie Consent Management Platform with Google Consent Mode v2 support, customizable banner and popup, multilingual texts via Polylang and WPML.
- * Version: 1.3.2
+ * Version: 1.3.3
  * Author: Ivan Chumak
  * Text Domain: custom-cookie-cmp
  * Domain Path: /languages
@@ -25,7 +25,7 @@ define('CUSTOMCOOKIECMP_DONATION_URL', 'https://ko-fi.com/vanochumak');
 class Custom_Cookie_CMP
 {
    const OPTION_KEY = 'custom_cookie_cmp_options';
-   const VERSION    = '1.3.2';
+   const VERSION    = '1.3.3';
 
 
    private static $instance = null;
@@ -164,6 +164,7 @@ class Custom_Cookie_CMP
          'banner_font_size'      => '',
          'banner_inner_width'    => '',
          'banner_inner_padding'  => '',
+         'mobile_buttons_inline' => 0,
          'disabled_locales'     => array(),
          'consent_expiry'       => 365,
          'active_cats'       => array( // Which categories to show
@@ -405,6 +406,14 @@ class Custom_Cookie_CMP
          'hide_banner_title',
          __('Hide banner title', 'custom-cookie-cmp'),
          array($this, 'field_hide_banner_title'),
+         'custom-cookie-cmp',
+         'custom_cookie_cmp_main'
+      );
+
+      add_settings_field(
+         'mobile_buttons_inline',
+         __('Mobile: buttons inline with text', 'custom-cookie-cmp'),
+         array($this, 'field_mobile_buttons_inline'),
          'custom-cookie-cmp',
          'custom_cookie_cmp_main'
       );
@@ -666,9 +675,10 @@ class Custom_Cookie_CMP
       $output = $this->get_options();
 
       $output['enabled']              = empty($input['enabled']) ? 0 : 1;
-      $output['hide_manage_btn']      = empty($input['hide_manage_btn']) ? 0 : 1;
-      $output['hide_decline_btn']     = empty($input['hide_decline_btn']) ? 0 : 1;
-      $output['hide_banner_title']    = empty($input['hide_banner_title']) ? 0 : 1;
+      $output['hide_manage_btn']       = empty($input['hide_manage_btn']) ? 0 : 1;
+      $output['hide_decline_btn']      = empty($input['hide_decline_btn']) ? 0 : 1;
+      $output['hide_banner_title']     = empty($input['hide_banner_title']) ? 0 : 1;
+      $output['mobile_buttons_inline'] = empty($input['mobile_buttons_inline']) ? 0 : 1;
       $output['banner_width']         = sanitize_text_field($input['banner_width'] ?? '');
       $output['btn_min_width']        = sanitize_text_field($input['btn_min_width'] ?? '');
       $output['btn_border_radius']    = max(0, min(50, (int) ($input['btn_border_radius'] ?? 4)));
@@ -770,6 +780,17 @@ class Custom_Cookie_CMP
       <label>
          <input type="checkbox" name="<?php echo esc_attr(self::OPTION_KEY); ?>[hide_banner_title]" value="1" <?php checked($options['hide_banner_title'], 1); ?> />
          <?php esc_html_e('Hide title on the banner', 'custom-cookie-cmp'); ?>
+      </label>
+   <?php
+   }
+
+   public function field_mobile_buttons_inline()
+   {
+      $options = $this->get_options();
+   ?>
+      <label>
+         <input type="checkbox" name="<?php echo esc_attr(self::OPTION_KEY); ?>[mobile_buttons_inline]" value="1" <?php checked($options['mobile_buttons_inline'], 1); ?> />
+         <?php esc_html_e('On mobile, keep buttons on the right side in the same row as text', 'custom-cookie-cmp'); ?>
       </label>
    <?php
    }
@@ -1214,6 +1235,9 @@ class Custom_Cookie_CMP
       }
       if (!empty($options['hide_banner_title'])) {
          $banner_cls .= ' ccc-no-title';
+      }
+      if (!empty($options['mobile_buttons_inline'])) {
+         $banner_cls .= ' ccc-mobile-inline';
       }
    ?>
       <div id="ccc-banner" class="<?php echo esc_attr($banner_cls); ?>" aria-hidden="true">

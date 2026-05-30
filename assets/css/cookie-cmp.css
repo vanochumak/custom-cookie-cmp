@@ -466,3 +466,32 @@ body.cookie-popup-open {
       line-height: 1.5;
    }
 }
+
+/* Mobile inline: keep buttons on the right in the same row as text */
+@media (max-width: 768px) {
+   #ccc-banner.ccc-mobile-inline.ccc-position-bottom-full .ccc-banner-inner {
+      flex-direction: row;
+      align-items: center;
+   }
+}
+
+@media (min-width: 320px) and (max-width: 576px) {
+   #ccc-banner.ccc-mobile-inline.ccc-position-bottom-full .ccc-banner-inner,
+   #ccc-banner.ccc-mobile-inline.ccc-position-center .ccc-banner-inner {
+      flex-direction: row;
+      align-items: center;
+   }
+
+   #ccc-banner.ccc-mobile-inline .ccc-banner-actions {
+      display: flex;
+      flex-direction: column;
+      width: auto;
+      margin-left: 0;
+      flex-shrink: 0;
+   }
+
+   #ccc-banner.ccc-mobile-inline:not(.ccc-no-decline):has(.ccc-btn-manage) .ccc-btn-accept-all,
+   #ccc-banner.ccc-mobile-inline.ccc-no-decline:not(:has(.ccc-btn-manage)) .ccc-btn-accept-all {
+      grid-column: unset;
+   }
+}

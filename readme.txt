@@ -4,7 +4,7 @@ Tags: cookie, gdpr, consent, cookie-banner, google-consent-mode
 Requires at least: 5.9
 Tested up to: 6.9
 Requires PHP: 7.4
-Stable tag: 1.3.2
+Stable tag: 1.3.3
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -57,6 +57,9 @@ Yes. The plugin is fully translation-ready and compatible with WPML and Polylang
 
 == Changelog ==
 
+= 1.3.3 =
+* Added "Mobile: buttons inline with text" option — when enabled, banner buttons stay on the right side in the same row as the text on mobile screens
+
 = 1.3.2 =
 * Fix: text fields in the Texts section were not saved on sites without Polylang or WPML — locale key case mismatch (en_US vs en_us) caused saved values to be unreadable
 
@@ -94,6 +97,9 @@ Yes. The plugin is fully translation-ready and compatible with WPML and Polylang
 * Initial release
 
 == Upgrade Notice ==
+
+= 1.3.3 =
+New option: keep banner buttons inline with text on mobile. Enable in Settings → Cookie CMP → General Settings.
 
 = 1.3.2 =
 Bug fix: texts entered in the Banner, Popup, Buttons and Categories fields were not saved on plain WordPress installations (without Polylang or WPML). Update immediately if you use the Texts section.
